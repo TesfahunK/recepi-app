@@ -1,0 +1,69 @@
+{
+  "name": "profile",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "bio": {
+      "type": "string",
+      "required": true
+    },
+    "img_url": {
+      "type": "string",
+      "default": ""
+    },
+    "birthdate": {
+      "type": "string",
+      "required": true
+    },
+    "userId": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "saved": {
+      "type": "embedsMany",
+      "model": "recepi",
+      "foriegnKey": "",
+      "default": []
+    }
+  },
+  "acls": [
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$unauthenticated",
+      "permission": "DENY"
+    }
+  ],
+  "methods": {
+    "new": {
+      "accepts": [
+        {
+          "type": "object",
+          "arg": "data",
+          "required": true,
+          "description": "body of the new profile",
+          "http": {
+            "source": "body"
+          }
+        }
+      ],
+      "returns": [
+        {
+          "arg": "result",
+          "root": "true",
+          "type": "object",
+          "description": "sends the new profile "
+        }
+      ]
+    }
+  }
+}

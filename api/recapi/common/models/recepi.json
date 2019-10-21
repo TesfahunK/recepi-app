@@ -1,0 +1,76 @@
+{
+  "name": "recepi",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "dish": {
+      "type": "string",
+      "required": true
+    },
+    "img_url": {
+      "type": "string",
+      "required": true
+    },
+    "tags": {
+      "type": ["string"]
+    },
+    "ingridients": {
+      "type": ["object"],
+      "required": true
+    },
+    "steps": {
+      "type": ["object"],
+      "required": true
+    },
+    "equipments": {
+      "type": ["string"],
+      "required": true
+    },
+    "duration": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "profile": {
+      "type": "belongsTo",
+      "model": "profile"
+    }
+  },
+  "acls": [
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$unauthenticated",
+      "permission": "DENY"
+    }
+  ],
+  "methods": {
+    "new": {
+      "accepts": [
+        {
+          "type": "object",
+          "arg": "data",
+          "required": true,
+          "description": "body of the recepi object",
+          "http": {
+            "source": "body"
+          }
+        }
+      ],
+      "returns": [
+        {
+          "arg": "result",
+          "root": "true",
+          "type": "object",
+          "description": "returns the newly created recepi"
+        }
+      ],
+      "description": "creates a recepi with cloudinary uploader"
+    }
+  }
+}
