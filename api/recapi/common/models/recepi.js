@@ -1,6 +1,7 @@
 "use strict";
 
 var cloudinary = require("../../server/server");
+
 module.exports = function(Recepi) {
   /**
    * creates a recepi with cloudinary uploader
@@ -38,12 +39,15 @@ module.exports = function(Recepi) {
       tags,
       equipments,
       duration,
-      profileId,
-      image
+      profileId
     } = data;
-    // var photo = await cloudinary.uploader.upload(data.image, {
-    //   tags: "recepi_photo"
-    // });
+
+    var photo = await cloudinary.uploader.upload(
+      `data:image/png;base64,${data["img_url"]}`,
+      {
+        tags: "recepi_photo"
+      }
+    );
     let newd = {
       dish,
       steps,
@@ -52,14 +56,14 @@ module.exports = function(Recepi) {
       equipments,
       duration,
       profileId,
-      img_url: image
+      img_url: photo.secure_url
     };
     Recepi.create(newd, (err, rec) => {
-      // if (err) {
-      //   callback(null, rec);
-      // } else {
-      //   callback(err, null);
-      // }
+      if (err) {
+        callback(null, rec);
+      } else {
+        callback(err, null);
+      }
     });
   };
 };

@@ -6,7 +6,7 @@
 "use strict";
 
 var loopback = require("loopback");
-var cloudinary = require("cloudinary");
+var cloudinary = require("cloudinary").v2;
 var boot = require("loopback-boot");
 
 var app = (module.exports = loopback());
@@ -41,4 +41,4 @@ boot(app, __dirname, function(err) {
   if (require.main === module) app.start();
 });
 
-module.exports = cloudinary.v2;
+module.exports = cloudinary;

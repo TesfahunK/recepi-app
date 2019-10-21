@@ -157,6 +157,11 @@ class RecepiCard extends StatelessWidget {
                 );
               },
             ),
+            // Container(
+            //   height: 300,
+            //   decoration: BoxDecoration(
+            //       image: DecorationImage(image: NetworkImage(recepi.imgUrl))),
+            // ),
             Padding(
               padding: EdgeInsets.only(top: 10, left: 12, right: 12),
               child: Row(
