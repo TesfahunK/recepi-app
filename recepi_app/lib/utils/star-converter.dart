@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+/// *** Birthdate To StarSign Converter ***
+/// This method converts a date to star sign [IconData] that
+/// is used in profile avatars
+
 IconData getStar(DateTime birthdate) {
   if (birthdate.isAfter(DateTime(birthdate.year, 3, 20)) &&
       birthdate.isBefore(DateTime(birthdate.year, 4, 20))) {
@@ -49,9 +53,7 @@ IconData getStar(DateTime birthdate) {
   } else if (birthdate.isAfter(DateTime(birthdate.year, 2, 18)) &&
       birthdate.isBefore(DateTime(birthdate.year, 3, 19))) {
     // pis feb 19 -mar 18
-
     return MdiIcons.zodiacPisces;
   }
-
   return MdiIcons.emoticonFrown;
 }

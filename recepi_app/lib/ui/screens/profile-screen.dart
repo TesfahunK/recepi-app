@@ -14,7 +14,7 @@ final _appstate = getIt.get<AppState>();
 
 class ProfileScreen extends StatelessWidget {
   final bool mine;
-  ProfileScreen({this.mine});
+  ProfileScreen({this.mine = true});
 
   @override
   Widget build(BuildContext context) {
@@ -22,92 +22,114 @@ class ProfileScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text("Profile"),
           actions: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 5),
-              child: IconButton(
-                color: Colors.black,
-                onPressed: () {
-                  showModalBottomSheet(
-                      builder: (BuildContext context) {
-                        return Column(
-                          textDirection: TextDirection.ltr,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(top: 30),
-                              padding: EdgeInsets.only(bottom: 10),
-                              child: Text(
-                                "Are you sure you want to log out",
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ),
-                            DividerCustom(
-                              coloR: Colors.black.withOpacity(0.3),
-                              heighT: 0.5,
-                            ),
-                            Wrap(
-                              children: <Widget>[
-                                FlatButton(
-                                  padding: EdgeInsets.all(10),
-                                  child: Text("Yes"),
-                                  onPressed: () {
-                                    _appstate.logout();
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                FlatButton(
-                                  padding: EdgeInsets.all(10),
-                                  child: Text("No"),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            )
-                          ],
-                        );
+            mine
+                ? Container(
+                    margin: EdgeInsets.only(right: 5),
+                    child: IconButton(
+                      color: Colors.black,
+                      onPressed: () {
+                        showModalBottomSheet(
+                            builder: (BuildContext context) {
+                              return Column(
+                                textDirection: TextDirection.ltr,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(top: 30),
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: Text(
+                                      "log out?",
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                  DividerCustom(
+                                    coloR: Colors.black.withOpacity(0.3),
+                                    heighT: 0.5,
+                                  ),
+                                  Wrap(
+                                    children: <Widget>[
+                                      FlatButton(
+                                        padding: EdgeInsets.all(10),
+                                        child: Text("Yes"),
+                                        onPressed: () {
+                                          _appstate.logout();
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      FlatButton(
+                                        padding: EdgeInsets.all(10),
+                                        child: Text("No"),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  )
+                                ],
+                              );
+                            },
+                            context: context);
                       },
-                      context: context);
-                },
-                icon: Icon(MdiIcons.logoutVariant),
-              ),
-            )
+                      icon: Icon(MdiIcons.logoutVariant),
+                    ),
+                  )
+                : SizedBox.shrink()
           ],
         ),
-        body: RefreshIndicator(
-            onRefresh: () => _appstate.getProfile(mine: true),
-            child: StreamBuilder(
-              stream: _appstate.hasProfile,
-              builder: (context, AsyncSnapshot<bool> hasProfile) {
-                if (_appstate.getHasProfile) {
-                  return StreamBuilder(
-                    stream: _appstate.profile,
-                    builder: (context, AsyncSnapshot<Profile> profile) {
-                      return ProfileWidget(
-                        profile: _appstate.profileValue,
+        body: mine
+            ? RefreshIndicator(
+                onRefresh: () => _appstate.getProfile(mine: true),
+                child: StreamBuilder(
+                  stream: _appstate.hasProfile,
+                  builder: (context, AsyncSnapshot<bool> hasProfile) {
+                    if (_appstate.getHasProfile) {
+                      return StreamBuilder(
+                        stream: _appstate.profile,
+                        builder: (context, AsyncSnapshot<Profile> profile) {
+                          return ProfileWidget(
+                            profile: _appstate.profileValue,
+                          );
+                        },
                       );
-                    },
-                  );
-                } else if (_appstate.getHasProfile == false) {
-                  return NewProfileForm();
-                }
+                    } else if (_appstate.getHasProfile == false) {
+                      return ProfileForm();
+                    }
 
-                return Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                  ),
-                );
-              },
-            )));
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                      ),
+                    );
+                  },
+                ))
+            : StreamBuilder(
+                stream: _appstate.loadingProfile,
+                builder: (context, AsyncSnapshot<bool> isLoading) {
+                  if (_appstate.getProfileLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                      ),
+                    );
+                  } else {
+                    return ProfileWidget(
+                      profile: _appstate.getOtherProfile,
+                      mine: false,
+                    );
+                  }
+                },
+              ));
   }
 }
 
 class ProfileWidget extends StatelessWidget {
   final Profile profile;
-  const ProfileWidget({Key key, this.profile}) : super(key: key);
+  final bool mine;
+  const ProfileWidget({Key key, this.profile, this.mine = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -200,22 +222,24 @@ class ProfileWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    color: Colors.transparent,
-                    icon: Icon(
-                      Icons.edit,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (context) => EditProfileScreen()));
-                    },
-                  ),
-                )
+                mine
+                    ? Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                          color: Colors.transparent,
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) => EditProfileScreen()));
+                          },
+                        ),
+                      )
+                    : SizedBox.shrink()
               ],
             ),
           ),
@@ -225,10 +249,16 @@ class ProfileWidget extends StatelessWidget {
               (context, index) =>
                   _appstate.getRecepis[index].profile['id'] == profile.id
                       ? RecepiCard(
+                          profileLinkActive: false,
                           recepi: _appstate.getRecepis[index],
                         )
                       : SizedBox.shrink(),
               childCount: _appstate.getRecepis.length),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            height: 100,
+          ),
         )
       ],
     );

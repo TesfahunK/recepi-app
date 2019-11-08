@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Recepi App',
         theme: ThemeData(
+            scaffoldBackgroundColor: Colors.white,
             splashColor: Colors.amberAccent,
             fontFamily: "Avenir",
             unselectedWidgetColor: Colors.black,

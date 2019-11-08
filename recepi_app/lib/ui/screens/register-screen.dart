@@ -10,6 +10,8 @@ import 'package:recepi_app/ui/widgets/divider.dart';
 
 final _appstate = getIt.get<AppState>();
 
+/// **A Sign up Screen**
+
 class CreateAccountScreen extends StatefulWidget {
   @override
   _CreateAccountScreenState createState() => _CreateAccountScreenState();
@@ -162,14 +164,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 }
 
-class NewProfileForm extends StatefulWidget {
+class ProfileForm extends StatefulWidget {
   final bool editMode;
-  NewProfileForm({this.editMode = false});
+  ProfileForm({this.editMode = false});
   @override
-  _NewProfileFormState createState() => _NewProfileFormState();
+  _ProfileFormState createState() => _ProfileFormState();
 }
 
-class _NewProfileFormState extends State<NewProfileForm> {
+class _ProfileFormState extends State<ProfileForm> {
   TextEditingController _name;
   final _appstate = getIt.get<AppState>();
   TextEditingController _bio;

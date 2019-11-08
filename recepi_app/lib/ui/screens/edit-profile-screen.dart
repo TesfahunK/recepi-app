@@ -31,12 +31,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         body: CustomScrollView(
       slivers: <Widget>[
         SliverAppBar(
+          floating: true,
           title: Text("Edit Profile"),
         ),
         SliverToBoxAdapter(
           child: Container(
             height: MediaQuery.of(context).size.height * 0.8,
-            child: NewProfileForm(
+            child: ProfileForm(
               editMode: true,
             ),
           ),

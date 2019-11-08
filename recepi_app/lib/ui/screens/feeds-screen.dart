@@ -28,6 +28,7 @@ class FeedsScreen extends StatelessWidget {
                         delegate: RecepiSearch(),
                       );
                     },
+                    color: Colors.black,
                     icon: Icon(
                       Icons.search,
                     ),
@@ -91,10 +92,20 @@ class RecepiSearch extends SearchDelegate<Recepi> {
   RecepiSearch({this.tag = false});
 
   @override
+  ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context).copyWith(
+      primaryColor: Colors.amberAccent,
+      primaryIconTheme: IconTheme.of(context).copyWith(color: Colors.black),
+      primaryColorBrightness: Brightness.light,
+    );
+  }
+
+  @override
   List<Widget> buildActions(BuildContext context) {
     return [
       tag
           ? IconButton(
+              color: Colors.black,
               onPressed: null,
               icon: Icon(MdiIcons.tag),
             )

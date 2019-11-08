@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:recepi_app/data/models/ingridient.dart';
 
 class CustomChip extends StatelessWidget {
+  /// This is basically a chip but with some tweaks
+  /// it can customized based on Constructor and is used
+  /// to to Show Ingridients , Equipments and Tags
+
   final Color color;
   final Color textColor;
   final Ingridient ingridient;

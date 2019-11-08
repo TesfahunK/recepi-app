@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DividerCustom extends StatelessWidget {
+  /// A custom devider Widget that serves as vertical [Spacer]
+  /// with dufferent params
+
   final double heighT;
   final Color coloR;
   final double verticalMargin;

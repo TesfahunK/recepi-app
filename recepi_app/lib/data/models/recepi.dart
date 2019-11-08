@@ -10,7 +10,7 @@ class Recepi {
   List<String> tags = [];
   List<String> equipments = [];
   Map<String, String> profile;
-  String duration;
+  Map<String, String> duration;
 
   List<RecepiStep> _stepFactory(List stepdata) {
     List<RecepiStep> _converted =
@@ -41,14 +41,17 @@ class Recepi {
     this.id = recepi['id'];
     this.steps = _stepFactory(recepi['steps']);
     this.ingridients = _ingridientFactory(recepi['ingridients']);
-    this.duration = recepi['duration'];
+    this.duration = {
+      "hr": recepi['duration']['hr'],
+      "mm": recepi['duration']['mm']
+    };
     this.imgUrl = recepi['img_url'] ?? "";
     this.tags = _stringListFromMap(recepi['tags']);
     this.equipments = _stringListFromMap(recepi['equipments']);
     this.profile = {
       "name": recepi["profile"]['name'].toString(),
       "id": recepi["profile"]['id'].toString(),
-      "img_url": recepi["profile"].toString()
+      "birthdate": recepi["profile"]['birthdate'].toString()
     };
   }
 

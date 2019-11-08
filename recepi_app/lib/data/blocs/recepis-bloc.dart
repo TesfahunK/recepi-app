@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:recepi_app/data/appstate.dart';
 import 'package:recepi_app/data/get-it.dart';
 import 'package:recepi_app/data/models/recepi.dart';
+import 'package:recepi_app/utils/http-stuff.dart';
 import 'package:recepi_app/utils/imagedecoder.dart';
-import 'package:recepi_app/utils/request-handlers.dart' as RequestBroker;
+import 'package:recepi_app/utils/urls.dart' as urls;
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:recepi_app/utils/urls.dart' as urls;
 
 final _appstate = getIt.get<AppState>();
 
@@ -23,25 +24,19 @@ class RecepiBloc {
   bool get getFetching => _fetching.value;
 
   Future createRecepi({Recepi recepi, File image}) async {
-    try {
-      Map<String, dynamic> _mapped = recepi.tomap(
-          recepi, _appstate.profileValue.id, await tobase64(image));
-      Map<String, String> _filter = {
-        "access_token": _appstate.authdata.token,
-      };
-      String _body = json.encode(_mapped);
-      var response = await RequestBroker.handlePostRequest(
-          filter: _filter,
-          headers: {"content-type": "application/json"},
-          baseUrl: urls.base,
-          modelPath: urls.recepiPath,
-          body: _body);
-
-      if (response.statusCode == 200) {
-        print("posted");
-        getRecepies();
-      }
-    } catch (e) {}
+    Map<String, dynamic> _mapped =
+        recepi.tomap(recepi, _appstate.profileValue.id, await tobase64(image));
+    Map<String, String> _filter = {
+      "access_token": _appstate.authdata.token,
+    };
+    String _body = json.encode(_mapped);
+    await HttpBaby(onSuccess: (body) {
+      getRecepies();
+    }).handlePostRequest(
+        filter: _filter,
+        headers: {"content-type": "application/json"},
+        modelPath: urls.recepiPath,
+        body: _body);
   }
 
   List<Recepi> _recepisFactory(List list) {
@@ -50,64 +45,52 @@ class RecepiBloc {
   }
 
   Future getRecepies() async {
-    try {
-      Map<String, String> _filter = {
-        "access_token": _appstate.authdata.token,
-        "filter": json.encode({
-          "include": [
-            {
-              "relation": "profile",
-              "scope": {
-                "fields": ["name", "id", "img_url"]
-              }
+    Map<String, String> _filter = {
+      "access_token": _appstate.authdata.token,
+      "filter": json.encode({
+        "include": [
+          {
+            "relation": "profile",
+            "scope": {
+              "fields": ["name", "id", "birthdate"]
             }
-          ]
-        })
-      };
-      var response = await RequestBroker.handleGetRequest(
-          filter: _filter, baseUrl: urls.base, modelPath: urls.recepiPath);
-      if (response.statusCode == 200) {
-        var decoded = json.decode(response.body);
-        _recepis.add(_recepisFactory(decoded));
-      } else {
-        print(response.statusCode.toString());
-      }
-    } catch (e) {}
+          }
+        ]
+      })
+    };
+    await HttpBaby(
+      loading: (lo) {
+        _fetching.add(lo);
+      },
+      hasConnectionError: (meh) {
+        print("Nooo");
+      },
+      onSuccess: (body) {
+        _recepis.add(_recepisFactory(body));
+      },
+    ).handleGetRequest(filter: _filter, modelPath: urls.recepiPath);
   }
 
   Future deleteRecepi(String id, Recepi recepi) async {
-    try {
-      Map<String, String> _filter = {
-        "access_token": _appstate.authdata.token,
-      };
-      var response = await RequestBroker.handleDeleteRequest(
-          filter: _filter,
-          baseUrl: urls.base,
-          modelPath: urls.recepiPath,
-          exactPath: "$id");
-      if (response.statusCode == 200) {
-        _recepis.value.remove(recepi);
-      } else if (response.statusCode == 401) {
-        _appstate.logout();
-      }
-    } catch (e) {}
+    Map<String, String> _filter = {
+      "access_token": _appstate.authdata.token,
+    };
+    await HttpBaby(onSuccess: (body) {
+      _recepis.value.remove(recepi);
+    }, onUnauthorized: (body) {
+      _appstate.logout();
+    }).handleDeleteRequest(
+      filter: _filter,
+      modelPath: "${urls.recepiPath}/$id",
+    );
   }
 
   Future updateRecepi({String id, Map data}) async {
-    try {
-      Map<String, String> _filter = {
-        "access_token": _appstate.authdata.token,
-      };
-      var response = await RequestBroker.handlePatchRequest(
-          filter: _filter,
-          baseUrl: urls.base,
-          modelPath: urls.recepiPath,
-          id: "$id");
-      if (response.statusCode == 200) {
-        var decoded = json.decode(response.body);
-        _recepis.add(_recepisFactory(decoded));
-      }
-    } catch (e) {}
+    Map<String, String> _filter = {
+      "access_token": _appstate.authdata.token,
+    };
+    await HttpBaby(onSuccess: (body) {}).handlePatchRequest(
+        filter: _filter, modelPath: "${urls.recepiPath}/$id", body: data);
   }
 
   disposeRecepi() {

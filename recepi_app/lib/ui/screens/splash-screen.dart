@@ -23,6 +23,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    /// what do i do?
+    /// Well im in charge of checking authentication status
+    /// and i return a splashScreen widget til im done with that
+    /// and when i m done i either return [HomeScreen] or [LoginScreen]
+
     return Scaffold(
       body: StreamBuilder(
         stream: _appstate.isAuthenticated,
@@ -40,6 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class Splash extends StatelessWidget {
+  /// A splash Screen widget
   @override
   Widget build(BuildContext context) {
     return Container(

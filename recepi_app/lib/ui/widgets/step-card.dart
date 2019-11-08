@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:recepi_app/data/models/step.dart';
 
 class StepCard extends StatelessWidget {
+  /// This is a Widget that shows a single step
+  /// it accepts [index] which is basically a number to
+  /// identify the stage of a process, and a [step] that holds
+  /// header and description of the process
+
   final int index;
   final RecepiStep step;
 

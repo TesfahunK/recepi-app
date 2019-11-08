@@ -60,9 +60,9 @@ module.exports = function(Recepi) {
     };
     Recepi.create(newd, (err, rec) => {
       if (err) {
-        callback(null, rec);
-      } else {
         callback(err, null);
+      } else {
+        callback(null, rec);
       }
     });
   };

@@ -49,6 +49,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   String hr = "00";
   String mm = "30";
 
+  bool posting = false;
+
   @override
   void initState() {
     _ingridientName = new TextEditingController();
@@ -65,6 +67,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       _ingridients = widget.recepi.ingridients;
       _equipments = widget.recepi.equipments;
       _tags = widget.recepi.tags;
+//      _image = await fromBase64ToFile(widget.recepi.imgUrl);
     }
 
     super.initState();
@@ -78,6 +81,39 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     if (image != null) {
       Navigator.pop(context);
     }
+  }
+
+  bool _validateForm(BuildContext context) {
+    if (_name.text.isEmpty) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Dish name is empty"),
+        backgroundColor: Colors.black,
+      ));
+      return false;
+    }
+    if (_equipments.length == 0) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Equipments are empty"),
+        backgroundColor: Colors.black,
+      ));
+      return false;
+    }
+    if (_steps.length < 2) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Steps can't be less than 2"),
+        backgroundColor: Colors.black,
+      ));
+      return false;
+    }
+    if (_ingridients.length == 0) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Ingridients are empty"),
+        backgroundColor: Colors.black,
+      ));
+      return false;
+    }
+
+    return true;
   }
 
   @override
@@ -94,18 +130,38 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                   actions: <Widget>[
                     IconButton(
                       onPressed: () {
-                        _appstate.createRecepi(
-                          image: _image,
-                          recepi: Recepi(
-                              dish: _name.text,
-                              ingridients: _ingridients,
-                              equipments: _equipments,
-                              steps: _steps,
-                              tags: _tags,
-                              duration: "${hr}hr and ${mm}min"),
-                        );
+                        setState(() {
+                          posting = true;
+                        });
+                        if (_validateForm(context)) {
+                          _appstate
+                              .createRecepi(
+                            image: _image,
+                            recepi: Recepi(
+                                dish: _name.text,
+                                ingridients: _ingridients,
+                                equipments: _equipments,
+                                steps: _steps,
+                                tags: _tags,
+                                duration: {"hr": hr, "mm": mm}),
+                          )
+                              .then((done) {
+                            setState(() {
+                              posting = false;
+                            });
+                            _appstate.switchScreen(to: 0);
+                          });
+                        }
+                        setState(() {
+                          posting = false;
+                        });
                       },
-                      icon: Icon(Icons.send),
+                      icon: posting
+                          ? CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.black),
+                            )
+                          : Icon(Icons.send),
                     )
                   ],
                   title: widget.editMode

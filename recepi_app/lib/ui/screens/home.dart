@@ -12,7 +12,9 @@ class HomeScreen extends StatelessWidget {
   final List<Widget> _bodies = [
     FeedsScreen(),
     AddRecipeScreen(),
-    ProfileScreen()
+    ProfileScreen(
+      mine: true,
+    )
   ];
   final Color _selected = Colors.red;
   final Color _unselected = Colors.black;

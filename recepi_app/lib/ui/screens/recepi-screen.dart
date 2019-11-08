@@ -7,6 +7,7 @@ import 'package:recepi_app/utils/imagedecoder.dart';
 
 import 'feeds-screen.dart';
 
+/// This shows a full detail of recepi
 class RecepiScreen extends StatelessWidget {
   final Recepi recepi;
   RecepiScreen({this.recepi});

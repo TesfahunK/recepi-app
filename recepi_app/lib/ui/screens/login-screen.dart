@@ -19,6 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _remember = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _storage = new FlutterSecureStorage();
+
+  //This method reads if there is a saved crendential on the device
   Future _readCredentials() async {
     String password = await _storage.read(key: "recepi_passphrase");
     String email = await _storage.read(key: "recepi_mail");

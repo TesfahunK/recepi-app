@@ -1,6 +1,9 @@
 import 'package:rxdart/rxdart.dart';
 
 class UiBloc {
+  /// **Handles bottom navigation indexing**
+  /// decideds whit screen to show on the homescreen
+
   final _currentBottomBarIndex = new BehaviorSubject<int>.seeded(0);
 
   //Getters
